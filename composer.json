@@ -1,0 +1,29 @@
+{
+    "name": "darkdarin/xsd-entity-generator",
+    "description": "Generator for make DTO from XSD",
+    "license": "BSD-3-Clause",
+    "type": "package",
+    "authors": [
+        {
+            "name": "Babushkin Pavel",
+            "email": "idarksoft@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "DarkDarin\\XsdEntityGenerator\\": "src/"
+        }
+    },
+    "require": {
+        "php": "8.2.*|8.3.*",
+        "darkdarin/php-entity-renderer": "^1.1",
+        "illuminate/support": "^9.0|^10.0",
+        "symfony/property-access": "^6.4",
+        "symfony/property-info": "^6.4",
+        "symfony/serializer": "^6.4"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.1",
+        "roave/security-advisories": "dev-latest"
+    }
+}
