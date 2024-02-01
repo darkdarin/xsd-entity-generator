@@ -13,9 +13,14 @@ use Symfony\Component\Serializer\NameConverter\MetadataAwareNameConverter;
 use Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer;
 use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 use Symfony\Component\Serializer\Normalizer\BackedEnumNormalizer;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\JsonSerializableNormalizer;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
+/**
+ * @psalm-api
+ */
 class SchemaSerializerFactory
 {
     public function __invoke(): SchemaSerializerInterface
@@ -23,6 +28,9 @@ class SchemaSerializerFactory
         return new SchemaSerializer($this->getDefaultNormalizers(), [new XmlEncoder()]);
     }
 
+    /**
+     * @return list<DenormalizerInterface|NormalizerInterface>
+     */
     private function getDefaultNormalizers(): array
     {
         $classMetadataFactory = new ClassMetadataFactory(

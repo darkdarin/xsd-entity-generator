@@ -4,12 +4,15 @@ namespace DarkDarin\XsdEntityGenerator\DTO;
 
 use Symfony\Component\Serializer\Attribute\SerializedName;
 
+/**
+ * @psalm-api
+ */
 class ComplexType implements NamedTypeInterface, WithAnnotationInterface
 {
     use WithAnnotation;
 
     /**
-     * @param array<Attribute>|string $attribute
+     * @param array<Attribute>|null $attribute
      */
     public function __construct(
         #[SerializedName('@name')]

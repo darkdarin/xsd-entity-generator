@@ -4,13 +4,16 @@ namespace DarkDarin\XsdEntityGenerator\DTO;
 
 use Symfony\Component\Serializer\Attribute\SerializedName;
 
+/**
+ * @psalm-api
+ */
 class Attribute implements WithAnnotationInterface
 {
     use WithAnnotation;
 
     public function __construct(
         #[SerializedName('@name')]
-        public readonly ?string $name,
+        public readonly string $name,
         #[SerializedName('@type')]
         public readonly BaseTypeEnum|string|null $type = null,
         #[SerializedName('@use')]

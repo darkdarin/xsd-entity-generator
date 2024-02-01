@@ -2,14 +2,17 @@
 
 namespace DarkDarin\XsdEntityGenerator\DTO;
 
+/**
+ * @psalm-api
+ */
 readonly class Annotation
 {
     /**
-     * @param array<AppInfo>|null $appinfo
-     * @param array<Documentation>|null $documentation
+     * @param list<AppInfo> $appinfo
+     * @param list<Documentation> $documentation
      */
     public function __construct(
-        public ?array $appinfo = null,
-        public ?array $documentation = null,
+        public array $appinfo = [],
+        public array $documentation = [],
     ) {}
 }

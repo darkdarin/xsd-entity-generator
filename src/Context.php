@@ -2,6 +2,9 @@
 
 namespace DarkDarin\XsdEntityGenerator;
 
+/**
+ * @psalm-api
+ */
 readonly class Context
 {
     public function __construct(
@@ -24,8 +27,13 @@ readonly class Context
         return $this->path;
     }
 
+    /**
+     * @param string $className
+     * @return class-string
+     */
     public function getClassName(string $className): string
     {
+        /** @var class-string */
         return $this->namespace . '\\' . $className;
     }
 

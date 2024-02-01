@@ -30,17 +30,22 @@ use DarkDarin\XsdEntityGenerator\DTO\WithAnnotationInterface;
 use Illuminate\Support\Str;
 use Symfony\Component\Serializer\Attribute\SerializedName;
 
+/**
+ * @psalm-api
+ */
 class DTOGenerator
 {
     /** @var array<string, NamedTypeInterface> */
     private array $globalTypes = [];
     /** @var array<string, TypeRendererInterface> */
     private array $resolvedTypes = [];
-    private ?Context $globalContext = null;
+    private Context $globalContext;
 
     public function __construct(
         private readonly PrimitiveTypeResolverInterface $primitiveTypeResolver,
-    ) {}
+    ) {
+        $this->globalContext = new Context('', '');
+    }
 
     public function generate(Schema $schema, string $basePath, string $namespace): void
     {
@@ -110,9 +115,8 @@ class DTOGenerator
                 return $this->generateEnum($type, $className, $context);
             }
 
-            if ($type->restriction->base !== null) {
-                return $this->getGlobalType($type->restriction->base);
-            }
+
+            return $this->getGlobalType($type->restriction->base);
         }
 
         return BuiltinTypeRenderer::Mixed;
@@ -168,8 +172,9 @@ class DTOGenerator
         $constructorRenderer = new MethodRenderer('__construct');
         $constructorRenderer->setVisibilityModifier(VisibilityModifierEnum::Public);
 
-        if ($type->sequence?->element !== null) {
-            foreach ($type->sequence->element as $element) {
+        $sequenceElements = $type->sequence?->element;
+        if (is_array($sequenceElements)) {
+            foreach ($sequenceElements as $element) {
                 $parameterRenderer = $this->getRendererFromElement($element, $className, $context);
                 $parameterRenderer->setVisibilityModifier(VisibilityModifierEnum::Public)
                     ->setReadonly();
@@ -177,8 +182,9 @@ class DTOGenerator
             }
         }
 
-        if ($type->choice?->element !== null) {
-            foreach ($type->choice->element as $element) {
+        $choiceElements = $type->choice?->element;
+        if (is_array($choiceElements)) {
+            foreach ($choiceElements as $element) {
                 $parameterRenderer = $this->getRendererFromElement($element, $className, $context);
                 $parameterRenderer->setVisibilityModifier(VisibilityModifierEnum::Public)
                     ->setReadonly();
@@ -186,8 +192,9 @@ class DTOGenerator
             }
         }
 
-        if ($type->all?->element !== null) {
-            foreach ($type->choice->element as $element) {
+        $allElements = $type->all?->element;
+        if (is_array($allElements)) {
+            foreach ($allElements as $element) {
                 $parameterRenderer = $this->getRendererFromElement($element, $className, $context);
                 $parameterRenderer->setVisibilityModifier(VisibilityModifierEnum::Public)
                     ->setReadonly();
@@ -273,8 +280,14 @@ class DTOGenerator
     {
         $enumType = EnumTypeEnum::String;
 
-        if ($type->restriction?->base !== null) {
-            $enumGlobalType = $this->getGlobalType($type->restriction?->base);
+        $enumerations = $type->restriction?->enumeration;
+        $baseType = $type->restriction?->base;
+        if (!is_array($enumerations)) {
+            return $baseType !== null ? $this->getGlobalType($baseType) : BuiltinTypeRenderer::Mixed;
+        }
+
+        if ($baseType !== null) {
+            $enumGlobalType = $this->getGlobalType($baseType);
             $enumType = match ($enumGlobalType) {
                 BuiltinTypeRenderer::Int => EnumTypeEnum::Int,
                 default => EnumTypeEnum::String,
@@ -287,7 +300,7 @@ class DTOGenerator
 
         $this->setDescriptionFromAnnotation($type, $enumRenderer);
 
-        foreach ($type->restriction?->enumeration as $enumCase) {
+        foreach ($enumerations as $enumCase) {
             $caseName = $this->getCorrectVariableName($enumCase->value);
             $caseValue = new ValueRenderer($enumCase->value);
             $enumRenderer->addCase(new EnumCaseRenderer($caseName, $caseValue));
@@ -313,11 +326,9 @@ class DTOGenerator
         WithAnnotationInterface $annotation,
         EntityWithDescriptionInterface $entity
     ): void {
-        if (
-            !empty($annotation->getAnnotation()?->documentation)
-            && $annotation->getAnnotation()?->documentation[0]->content !== null
-        ) {
-            $entity->setDescription($annotation->getAnnotation()?->documentation[0]->content);
+        $documents = $annotation->getAnnotation()?->documentation ?? [];
+        if (count($documents) > 0 && $documents[0]->content !== null) {
+            $entity->setDescription($documents[0]->content);
         }
     }
 

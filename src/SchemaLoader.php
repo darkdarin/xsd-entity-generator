@@ -5,6 +5,9 @@ namespace DarkDarin\XsdEntityGenerator;
 use DarkDarin\XsdEntityGenerator\DTO\Schema;
 use DarkDarin\XsdEntityGenerator\Serializer\SchemaSerializerInterface;
 
+/**
+ * @psalm-api
+ */
 readonly class SchemaLoader
 {
     public function __construct(

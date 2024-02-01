@@ -2,6 +2,9 @@
 
 namespace DarkDarin\XsdEntityGenerator\DTO;
 
+/**
+ * @psalm-api
+ */
 readonly class Sequence
 {
     /**

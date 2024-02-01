@@ -7,9 +7,6 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerAwareInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerAwareTrait;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
-/**
- * @method array getSupportedTypes(?string $format)
- */
 class XmlValueDenormalizer implements DenormalizerInterface, DenormalizerAwareInterface
 {
     use DenormalizerAwareTrait;
@@ -23,8 +20,19 @@ class XmlValueDenormalizer implements DenormalizerInterface, DenormalizerAwareIn
         return $data;
     }
 
-    public function supportsDenormalization(mixed $data, string $type, string $format = null): bool
+    public function supportsDenormalization(mixed $data, string $type, string $format = null, array $context = []): bool
     {
         return is_string($data) && $format === XmlEncoder::FORMAT && class_exists($type) && !enum_exists($type);
+    }
+
+    /**
+     * @param string|null $format
+     * @return false[]
+     * @psalm-suppress PossiblyUnusedMethod
+     * @psalm-suppress PossiblyUnusedParam
+     */
+    public function getSupportedTypes(?string $format): array
+    {
+        return ['*' => false];
     }
 }

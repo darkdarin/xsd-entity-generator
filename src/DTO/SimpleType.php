@@ -4,6 +4,9 @@ namespace DarkDarin\XsdEntityGenerator\DTO;
 
 use Symfony\Component\Serializer\Attribute\SerializedName;
 
+/**
+ * @psalm-api
+ */
 class SimpleType implements NamedTypeInterface, WithAnnotationInterface
 {
     use WithAnnotation;
