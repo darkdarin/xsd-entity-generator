@@ -17,7 +17,7 @@
     "require": {
         "php": "8.2.*|8.3.*",
         "darkdarin/php-entity-renderer": "^1.1",
-        "illuminate/support": "^9.0|^10.0",
+        "illuminate/support": "^9.0|^10.0|^11.0",
         "symfony/property-access": "^6.4",
         "symfony/property-info": "^6.4",
         "symfony/serializer": "^6.4"
